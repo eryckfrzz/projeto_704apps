@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http/intercepted_client.dart';
-import 'package:projeto_704apps/domain/interfaces/login_dao.dart';
+import 'package:projeto_704apps/features/data/login_dao.dart';
 import 'package:projeto_704apps/helpers/url.dart';
 import 'package:projeto_704apps/helpers/http_interceptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';

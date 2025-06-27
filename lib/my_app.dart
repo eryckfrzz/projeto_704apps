@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_704apps/screens/config_screen.dart';
 import 'package:projeto_704apps/screens/contacts/add_contact_screen.dart';
 import 'package:projeto_704apps/screens/contacts/contact_detail_screen.dart';
 import 'package:projeto_704apps/screens/contacts/contacts_list.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: 'login',
       routes: {
+        'config': (context) => ConfigScreen(),
         'login': (context) => LoginScreen(),
         'home': (context) => Home(),
         'usersList': (context) => UsersList(),

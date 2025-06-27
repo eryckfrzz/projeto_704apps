@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http/intercepted_client.dart';
-import 'package:projeto_704apps/domain/interfaces/contact_dao.dart';
-import 'package:projeto_704apps/domain/models/contact.dart';
+import 'package:projeto_704apps/features/data/contact_dao.dart';
+import 'package:projeto_704apps/features/models/contact.dart';
 import 'package:projeto_704apps/helpers/http_interceptor.dart';
 import 'package:projeto_704apps/helpers/url.dart';
 

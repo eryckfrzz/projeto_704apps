@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
-import 'package:projeto_704apps/domain/models/user.dart';
+import 'package:projeto_704apps/features/models/user.dart';
 import 'package:projeto_704apps/stores/user_store.dart';
 
 class EditScreen extends StatefulWidget {

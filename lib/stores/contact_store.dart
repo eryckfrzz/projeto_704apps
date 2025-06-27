@@ -1,6 +1,6 @@
 import 'package:mobx/mobx.dart';
-import 'package:projeto_704apps/domain/models/contact.dart';
-import 'package:projeto_704apps/services/contacts_dao_impl.dart';
+import 'package:projeto_704apps/features/models/contact.dart';
+import 'package:projeto_704apps/services/remote/contacts_dao_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'contact_store.g.dart';

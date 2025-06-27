@@ -1,6 +1,6 @@
 import 'package:mobx/mobx.dart';
-import 'package:projeto_704apps/domain/models/user.dart';
-import 'package:projeto_704apps/services/users_dao_impl.dart';
+import 'package:projeto_704apps/features/models/user.dart';
+import 'package:projeto_704apps/services/remote/users_dao_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'user_store.g.dart';

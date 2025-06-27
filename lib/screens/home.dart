@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:projeto_704apps/stores/contact_store.dart';
-import 'package:projeto_704apps/stores/user_store.dart';
-import 'package:provider/provider.dart';
+import 'package:projeto_704apps/screens/widgets/sliding_button.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,263 +9,79 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int _selectedOptionIndex = 1;
+
   @override
   Widget build(BuildContext context) {
-    final userStore = Provider.of<UserStore>(context);
-
-    final contactStore = Provider.of<ContactStore>(context);
     return Scaffold(
-      appBar: AppBar(),
-      body: Observer(
-        builder:
-            (_) => Container(
-              child: Center(
-                child: Column(
-                  children: [
-                    SizedBox(height: 50),
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(90)),
-                        color: Colors.black,
-                      ),
-                      child: Icon(
-                        Icons.admin_panel_settings,
-                        color: Colors.white,
-                        size: 60,
-                      ),
-                    ),
-                    SizedBox(height: 100),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, 'config');
+            },
+            icon: Icon(Icons.settings, size: 50, color: Colors.black),
+          ),
+        ],
+      ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap:
-                              () =>
-                                  Navigator.pushNamed(context, 'addUserScreen'),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              color: Colors.black,
-                            ),
-                            width: 180,
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.person_add_alt_rounded,
-                                  size: 50,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(height: 15),
-
-                                Text(
-                                  'Cadastro de',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Usuários',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, 'usersList');
-                            userStore.getUsers();
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              color: Colors.black,
-                            ),
-                            width: 180,
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.list_alt_rounded,
-                                  size: 50,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(height: 15),
-
-                                Text(
-                                  'Lista de',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Usuários',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 20),
-
-                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap:
-                              () =>
-                                  Navigator.pushNamed(context, 'addContactScreen'),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              color: Colors.black,
-                            ),
-                            width: 180,
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.person_add_alt_rounded,
-                                  size: 50,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(height: 15),
-
-                                Text(
-                                  'Cadastro de',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Contatos',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, 'contactsList');
-                            userStore.getUsers();
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              color: Colors.black,
-                            ),
-                            width: 180,
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.contact_page_rounded,
-                                  size: 50,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(height: 15),
-
-                                Text(
-                                  'Lista de',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Contatos',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 90),
-
-                    Text(
-                      'Bem-vindo(a) a Zafira!',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'assets/images/WhatsApp_Image_2025-06-20_at_17.56.48-removebg-preview.png',
             ),
+            fit: BoxFit.cover,
+            alignment: Alignment.centerRight,
+
+            colorFilter: ColorFilter.mode(
+              // ignore: deprecated_member_use
+              Colors.white.withOpacity(0.1),
+              BlendMode.dstATop,
+            ),
+          ),
+        ),
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Image.asset(
+              'assets/images/WhatsApp_Image_2025-06-20_at_17.56.48-removebg-preview.png',
+              width: 190,
+              height: 190,
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'MOBILITY WATCH',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 37,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+
+            CustomToggleButton(
+              options: const ['AUTO', 'OFF', 'ON'],
+              initialIndex: _selectedOptionIndex,
+              onChanged: (index) {
+                setState(() {
+                  _selectedOptionIndex = index;
+                });
+
+                // lógica do botão aqui
+
+                print(
+                  'Opção selecionada na Home: ${['AUTO', 'OFF', 'ON'][index]}',
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

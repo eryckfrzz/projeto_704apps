@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
-import 'package:projeto_704apps/domain/models/user.dart';
+import 'package:projeto_704apps/features/models/user.dart';
 import 'package:projeto_704apps/stores/user_store.dart';
 
 class AddUserScreen extends StatefulWidget {
@@ -47,9 +47,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Usuário adicionado com sucesso!')),
       );
-      Navigator.of(
-        context,
-      ).pop(true); 
+      Navigator.of(context).pop(true);
     } else {
       ScaffoldMessenger.of(
         context,
@@ -60,7 +58,11 @@ class _AddUserScreenState extends State<AddUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Adicionar Novo Usuário')),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       body: Observer(
         builder: (_) {
           return SingleChildScrollView(
@@ -68,14 +70,36 @@ class _AddUserScreenState extends State<AddUserScreen> {
             child: Form(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Image.asset(
+                    'assets/images/LOGO_ZAFIRA-01b.png',
+                    width: 190,
+                    height: 190,
+                  ),
+
+                  SizedBox(height: 60),
+
                   TextFormField(
+                     cursorColor: Colors.black,
                     controller: _nameController,
                     decoration: const InputDecoration(
                       labelText: 'Name',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
+                      floatingLabelStyle: TextStyle(color: Colors.transparent),
+                      fillColor: Colors.white,
+                      filled: true,
+
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
                     ),
+
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'O nome não pode ser vazio.';
@@ -83,14 +107,26 @@ class _AddUserScreenState extends State<AddUserScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 25),
                   TextFormField(
+                     cursorColor: Colors.black,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
+                      floatingLabelStyle: TextStyle(color: Colors.transparent),
+                      fillColor: Colors.white,
+                      filled: true,
+
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
                     ),
 
                     validator: (value) {
@@ -103,14 +139,26 @@ class _AddUserScreenState extends State<AddUserScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 25),
 
                   TextFormField(
+                    cursorColor: Colors.black,
                     controller: _passwordController,
                     decoration: const InputDecoration(
                       labelText: 'Password',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.key),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
+                      floatingLabelStyle: TextStyle(color: Colors.transparent),
+                      fillColor: Colors.white,
+                      filled: true,
+
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -119,15 +167,27 @@ class _AddUserScreenState extends State<AddUserScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 25),
 
                   TextFormField(
                     controller: _roleController,
                     decoration: const InputDecoration(
                       labelText: 'Role',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.key),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
+                      floatingLabelStyle: TextStyle(color: Colors.transparent),
+                      fillColor: Colors.white,
+                      filled: true,
+
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
                     ),
+
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'O campo não pode ser vazio.';
@@ -135,16 +195,21 @@ class _AddUserScreenState extends State<AddUserScreen> {
                     },
                   ),
 
-                   const SizedBox(height: 24),
+                  const SizedBox(height: 80),
                   ElevatedButton(
                     onPressed: _handleAddUser,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 80),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      backgroundColor: Colors.blue
                     ),
                     child: const Text(
                       'Adicionar Usuário',
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18, color: Colors.white),
                     ),
+                    
                   ),
                 ],
               ),

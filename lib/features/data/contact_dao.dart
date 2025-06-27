@@ -1,4 +1,4 @@
-import 'package:projeto_704apps/domain/models/contact.dart';
+import 'package:projeto_704apps/features/models/contact.dart';
 
 abstract class ContactDao {
   Future<Contact?> registerContact(Contact contact, {required String token});

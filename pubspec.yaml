@@ -22,6 +22,14 @@ dependencies:
   mobx: ^2.3.3+2
   flutter_mobx: ^2.2.0+1
   provider: ^6.1.2
+  flutter_sound: ^9.2.13 
+  sqflite: ^2.4.2
+  workmanager: ^0.6.0 
+  path_provider: ^2.1.1 
+  permission_handler: ^12.0.0 
+  audioplayers: ^6.5.0 
+  path: ^1.8.3
+  camera: ^0.11.1
 
 dev_dependencies:
   flutter_test:
@@ -34,3 +42,10 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+
+  assets:
+    - assets/images/LOGO_ZAFIRA-01.png
+    - assets/images/LOGO_ZAFIRA-01b.png
+    - assets/images/LOGO_ZAFIRA-02.png
+    - assets/images/LOGO_ZAFIRA-03.png
+    - assets/images/WhatsApp_Image_2025-06-20_at_17.56.48-removebg-preview.png

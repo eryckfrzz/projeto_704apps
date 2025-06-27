@@ -1,4 +1,4 @@
-import 'package:projeto_704apps/domain/models/user.dart';
+import 'package:projeto_704apps/features/models/user.dart';
 
 abstract class UsersDao {
   Future<User?> register(User user);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:projeto_704apps/domain/models/contact.dart';
+import 'package:projeto_704apps/features/models/contact.dart';
 import 'package:projeto_704apps/stores/contact_store.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +15,7 @@ class EditContactScreen extends StatefulWidget {
 class _EditContactScreenState extends State<EditContactScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _numberController = TextEditingController();
+  final TextEditingController _instanceEmitter = TextEditingController();
 
   late ContactStore _contactStore; 
 
@@ -35,6 +36,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
   Future<void> _handleSave() async {
     final title = _titleController.text;
     final number = _numberController.text;
+    final instanceEmitter = _instanceEmitter.text;
 
     if (title.isEmpty || number.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -47,6 +49,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
       id: widget.contactId,
       title: title,
       number: number,
+      instanceEmitter: instanceEmitter
     );
 
     final bool updatedSuccessfully = await _contactStore.updateContact(
