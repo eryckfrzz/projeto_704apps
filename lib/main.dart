@@ -3,8 +3,11 @@ import 'package:projeto_704apps/my_app.dart';
 import 'package:projeto_704apps/stores/contact_store.dart';
 import 'package:projeto_704apps/stores/user_store.dart';
 import 'package:provider/provider.dart';
+import 'package:projeto_704apps/services/background_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeService();
   runApp(
     MultiProvider(
       providers: [

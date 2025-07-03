@@ -1,8 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+<!-- Para Android 13+ para notificações de foreground service -->
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="projeto_704apps"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <service
+            android:name="com.dexterous.flutter_background_service.BackgroundService"
+            android:foregroundServiceType="microphone">
+        </service>
         <activity
             android:name=".MainActivity"
             android:exported="true"

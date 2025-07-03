@@ -18,10 +18,21 @@ class _AddContactScreenState extends State<AddContactScreen> {
   bool _isSms = false;
   bool _isWhats = false;
   bool _isCall = false;
+  String? _selectedLevel = 'Maior que 5';
+
+  final List<String> _levels = [
+    'Nível 1',
+    'Nível 2',
+    'Nível 3',
+    'Nível 4',
+    'Nível 5',
+    'Maior que 5',
+  ];
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _numberController = TextEditingController();
-  final TextEditingController _instanceEmitterController = TextEditingController();
+  final TextEditingController _instanceEmitterController =
+      TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -205,14 +216,90 @@ class _AddContactScreenState extends State<AddContactScreen> {
                     ],
                   ),
 
-                  //adicionar campo para texto de transcrição e escolha de nível de ofensa
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+
+                      children: [
+                        Text('Texto do áudio da ligação'),
+                        SizedBox(height: 8),
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText:
+                                'Alô, sou ${_titleController.text}, estou em perigo, minha localização é //adicionar localização aqui',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    
+                    children: [
+                      Text(
+                        'Notificar para os níveis:',
+                        style: TextStyle(fontSize: 14, color: Colors.black),
+                      ),
+
+                      SizedBox(height: 8),
+
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        width: double.infinity,
+                        decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1 )),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton(
+                            value: _selectedLevel,
+                            icon: Icon(Icons.arrow_drop_down),
+                            elevation: 16,
+                            iconSize: 24,
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                            items: _levels.map((String level) {
+                              return DropdownMenuItem<String>(
+                                value: level,
+                                child: Text(level),
+                              );
+                            }).toList(),
+                            onChanged: (String? newvalue) {
+                              setState(() {
+                                _selectedLevel = newvalue;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
 
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: _handleAddContact,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Colors.green
+                      backgroundColor: Colors.green,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 40,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
                     ),
                     child: const Text(
                       'Continuar',

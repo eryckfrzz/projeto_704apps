@@ -38,6 +38,7 @@ class _ContactsListState extends State<ContactsList> {
               style: TextStyle(
                 color: Colors.deepPurple[400],
                 fontWeight: FontWeight.bold,
+                fontSize: 25
               ),
             ),
           ],

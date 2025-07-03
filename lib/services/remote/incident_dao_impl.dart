@@ -28,7 +28,7 @@ class IncidentDaoImpl implements IncidentDao {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: incidentJson
+        body: incidentJson,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -43,5 +43,32 @@ class IncidentDaoImpl implements IncidentDao {
     }
 
     return false;
+  }
+
+  @override
+  Future<List<Incident>> getIncidents({required String token}) async {
+    try {
+      http.Response response = await client.get(
+        Uri.parse('${apiUrl.url}/incident'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        List<Incident> incidents = [];
+        List<dynamic> incidentsList = json.decode(response.body);
+
+        for(var jsonMap in incidentsList) {
+          incidents.add(Incident.fromJson(jsonMap));
+        }
+
+        print('Incidentes encontrados com sucesso!');
+        return incidents;
+      }
+    } catch (e) {
+      print('Erro ao buscar incidentes: $e');
+      return Future.error('Erro ao buscar incidentes');
+    }
+
+    return [];
   }
 }

@@ -27,6 +27,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
               style: TextStyle(
                 color: Colors.deepPurple[400],
                 fontWeight: FontWeight.bold,
+                fontSize: 25
               ),
             ),
           ],
@@ -57,7 +58,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                         InkWell(
                           onTap:
                               () =>
-                                  Navigator.pushNamed(context, 'addUserScreen'),
+                                  Navigator.pushNamed(context, 'profile'),
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(
