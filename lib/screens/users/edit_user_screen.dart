@@ -20,13 +20,15 @@ class _EditScreenState extends State<EditScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
+  bool _userProfile = true;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _userStore = Provider.of<UserStore>(context);
 
     if (_userStore.user?.id != widget.userId || _userStore.user == null) {
-      _userStore.getUserId(widget.userId);
+      _userStore.getUserId(widget.userId, userAppFlag: false);
     }
     if (_userStore.user != null) {
       _nameController.text = _userStore.user!.name ?? '';
@@ -43,12 +45,16 @@ class _EditScreenState extends State<EditScreen> {
       name: updatedName,
       email: updatedEmail,
       password: '',
-      role: '',
+      //role: '',
+      //userApp: _userProfile,
+      phone: '',
+      adress: '',
+      whatsapp: '',
+      //moreInfo: '', 
+      extraInfos: '',
     );
 
-    final bool updatedSuccessfully = await _userStore.updateUser(
-      updatedUser,
-    ); 
+    final bool updatedSuccessfully = await _userStore.updateUser(updatedUser);
 
     if (updatedSuccessfully) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,10 +62,9 @@ class _EditScreenState extends State<EditScreen> {
       );
       Navigator.of(context).pop(true);
     } else {
-     
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Falha ao atualizar usuário!')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Falha ao atualizar usuário!')));
     }
   }
 

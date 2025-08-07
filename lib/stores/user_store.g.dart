@@ -51,16 +51,18 @@ mixin _$UserStore on _UserStore, Store {
       AsyncAction('_UserStore.getUserId', context: context);
 
   @override
-  Future<void> getUserId(int id) {
-    return _$getUserIdAsyncAction.run(() => super.getUserId(id));
+  Future<void> getUserId(int id, {required bool userAppFlag}) {
+    return _$getUserIdAsyncAction
+        .run(() => super.getUserId(id, userAppFlag: userAppFlag));
   }
 
   late final _$addUserAsyncAction =
       AsyncAction('_UserStore.addUser', context: context);
 
   @override
-  Future<bool> addUser(User newUser) {
-    return _$addUserAsyncAction.run(() => super.addUser(newUser));
+  Future<bool> addUser(User newUser, {required bool userAppFlag}) {
+    return _$addUserAsyncAction
+        .run(() => super.addUser(newUser, userAppFlag: userAppFlag));
   }
 
   late final _$deleteUserAsyncAction =
@@ -77,6 +79,42 @@ mixin _$UserStore on _UserStore, Store {
   @override
   Future<bool> updateUser(User user) {
     return _$updateUserAsyncAction.run(() => super.updateUser(user));
+  }
+
+  late final _$requestPasswordResetAsyncAction =
+      AsyncAction('_UserStore.requestPasswordReset', context: context);
+
+  @override
+  Future<bool> requestPasswordReset(String email) {
+    return _$requestPasswordResetAsyncAction
+        .run(() => super.requestPasswordReset(email));
+  }
+
+  late final _$resetPasswordAsyncAction =
+      AsyncAction('_UserStore.resetPassword', context: context);
+
+  @override
+  Future<bool> resetPassword(String token, String newPassword) {
+    return _$resetPasswordAsyncAction
+        .run(() => super.resetPassword(token, newPassword));
+  }
+
+  late final _$uploadProfileImageAsyncAction =
+      AsyncAction('_UserStore.uploadProfileImage', context: context);
+
+  @override
+  Future<bool> uploadProfileImage(int userId, String imagePath) {
+    return _$uploadProfileImageAsyncAction
+        .run(() => super.uploadProfileImage(userId, imagePath));
+  }
+
+  late final _$uploadOtherImagesAsyncAction =
+      AsyncAction('_UserStore.uploadOtherImages', context: context);
+
+  @override
+  Future<bool> uploadOtherImages(int userId, List<String> imagePaths) {
+    return _$uploadOtherImagesAsyncAction
+        .run(() => super.uploadOtherImages(userId, imagePaths));
   }
 
   late final _$_UserStoreActionController =

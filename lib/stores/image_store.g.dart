@@ -12,13 +12,13 @@ mixin _$ImageStore on _ImageStore, Store {
   late final _$imageAtom = Atom(name: '_ImageStore.image', context: context);
 
   @override
-  Image? get image {
+  ListImages? get image {
     _$imageAtom.reportRead();
     return super.image;
   }
 
   @override
-  set image(Image? value) {
+  set image(ListImages? value) {
     _$imageAtom.reportWrite(value, super.image, () {
       super.image = value;
     });
@@ -28,10 +28,9 @@ mixin _$ImageStore on _ImageStore, Store {
       AsyncAction('_ImageStore.registerImageAnalysis', context: context);
 
   @override
-  Future<Image?> registerImageAnalysis(
-      List<String> paths, String audioTranscriptionId) {
+  Future<ListImages?> registerImageAnalysis(int userId, List<String> paths) {
     return _$registerImageAnalysisAsyncAction
-        .run(() => super.registerImageAnalysis(paths, audioTranscriptionId));
+        .run(() => super.registerImageAnalysis(userId, paths));
   }
 
   @override

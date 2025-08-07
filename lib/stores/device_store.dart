@@ -197,7 +197,7 @@ abstract class _DeviceStore with Store {
 
       final bool success = await service.updateDevice(
         deviceToUpdate,
-        deviceToUpdate.deviceId,
+        deviceToUpdate.deviceId!,
         token: token!,
       );
 

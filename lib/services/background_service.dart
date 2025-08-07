@@ -1,257 +1,161 @@
-// lib/services/background_service.dart
 import 'dart:async';
-import 'dart:ui';
-import 'dart:io'; // Para File
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:record/record.dart';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart'; // Para gerar IDs únicos para incidentes
-import 'package:projeto_704apps/features/models/incident.dart'; // Importe o modelo de incidente
+import 'package:google_speech/google_speech.dart';
+import 'package:uuid/uuid.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import 'package:projeto_704apps/features/models/incident.dart';
+import 'package:projeto_704apps/features/models/badword.dart';
 import 'package:projeto_704apps/services/remote/incident_dao_impl.dart';
 import 'package:projeto_704apps/services/remote/incident_dao_artifact_impl.dart';
-import 'package:projeto_704apps/helpers/url.dart';
-
-// Instância global do gravador de áudio
-final _audioRecorder = AudioRecorder();
-Timer? _audioCaptureTimer; // Timer para controlar a gravação em chunks
-String? _currentRecordingPath; // Caminho do arquivo de áudio sendo gravado
-bool _isProcessingAudio = false; // Flag para evitar processamento simultâneo
-
-final Url _apiUrl = Url(); // Instância da URL da API
+import 'package:projeto_704apps/services/remote/badword_dao_impl.dart';
 
 final IncidentDaoImpl _apiService = IncidentDaoImpl();
 final IncidentArtifactDaoImpl _artifactService = IncidentArtifactDaoImpl();
+final BadwordDaoImpl _badwordService = BadwordDaoImpl();
 
-Future<void> getToken() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('access_token');
-  if (token == null) {
-    print('Token de autenticação não encontrado.');
-  } else {
-    print('Token de autenticação obtido com sucesso.');
-  }
-}
+/// Função chamada pelo Workmanager
+Future<void> backgroundAudioTask(Map<String, dynamic>? inputData) async {
+  print('[WorkManager] backgroundAudioTask iniciado');
 
+  // Recupera dados essenciais
+  final prefs = await SharedPreferences.getInstance();
+  final authToken = prefs.getString('access_token');
 
-// Função para ser executada em background
-@pragma('vm:entry-point')
-Future<void> onStart(ServiceInstance service) async {
-  DartPluginRegistrant.ensureInitialized();
-
-  if (service is AndroidServiceInstance) {
-    service.on('setAsForeground').listen((event) {
-      service.setAsForegroundService();
-    });
-
-    service.on('setAsBackground').listen((event) {
-      service.setAsBackgroundService();
-    });
-  }
-
-  service.on('stopService').listen((event) async {
-    print('Serviço de background: Recebendo comando de parada.');
-    await _stopAudioRecording(); // Garante que a gravação pare
-    service.stopSelf(); // Para o serviço de background
-  });
-
-  // Lógica para iniciar a captura de áudio
-  service.on('startRecording').listen((event) async {
-    print('Serviço de background: Iniciando gravação de áudio...');
-    bool hasPermission = await _audioRecorder.hasPermission();
-
-    if (hasPermission) {
-      // Inicia a gravação em chunks
-      _startAudioCaptureLoop(service);
-    } else {
-      print('Serviço de background: Permissão de microfone não concedida.');
-      service.invoke('update', {
-        'current_date': DateTime.now().toIso8601String(),
-        'message': 'Permissão de microfone negada.',
-      });
-    }
-  });
-
-  // Lógica para parar a captura de áudio
-  service.on('stopRecording').listen((event) async {
-    print('Serviço de background: Parando gravação de áudio...');
-    await _stopAudioRecording();
-    service.invoke('update', {
-      'current_date': DateTime.now().toIso8601String(),
-      'message': 'Monitoramento parado.',
-    });
-  });
-}
-
-// Inicia o loop de captura e processamento de áudio
-Future<void> _startAudioCaptureLoop(ServiceInstance service) async {
-  if (_audioCaptureTimer != null && _audioCaptureTimer!.isActive) {
-    print('Loop de captura de áudio já está ativo.');
+  // Carrega a chave do Google Speech do assets
+  String? googleSpeechApiKey;
+  try {
+    googleSpeechApiKey = (await rootBundle
+            .loadString('assets/google_speech_api_key.txt'))
+        .trim();
+  } catch (e) {
+    print('[WorkManager] Erro ao carregar chave do Google Speech: $e');
     return;
   }
 
-  // Define um timer para capturar áudio em chunks (ex: a cada 10 segundos)
-  _audioCaptureTimer = Timer.periodic(const Duration(seconds: 10), (
-    timer,
-  ) async {
-    if (_isProcessingAudio) {
-      print('Já processando áudio, pulando este ciclo.');
-      return;
-    }
-    _isProcessingAudio = true;
+  if (authToken == null || googleSpeechApiKey.isEmpty) {
+    print('[WorkManager] Token ou chave do Google Speech ausentes. Abortando.');
+    return;
+  }
 
-    try {
-      if (await _audioRecorder.isRecording()) {
-        // Se já estiver gravando, pare a gravação atual para obter o arquivo
-        final path = await _audioRecorder.stop();
-        if (path != null) {
-          print('Chunk de áudio gravado em: $path');
-          await _processAudioChunk(path, service);
-        }
-      }
+  // Confere permissão de microfone
+  if (!await Permission.microphone.isGranted) {
+    print('[WorkManager] Permissão de microfone não concedida.');
+    return;
+  }
 
-      // Inicia uma nova gravação para o próximo chunk
-      final directory = await getTemporaryDirectory();
-      _currentRecordingPath =
-          '${directory.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
-      await _audioRecorder.start(
-        path: _currentRecordingPath!,
-        RecordConfig(
-          encoder: AudioEncoder.aacLc,
-          numChannels: 1,
-          sampleRate: 16000,
-        ),
-      );
-      print('Nova gravação iniciada: $_currentRecordingPath');
+  // Grava áudio temporário
+  final recorder = FlutterSoundRecorder();
+  await recorder.openRecorder();
 
-      service.invoke('update', {
-        'current_date': DateTime.now().toIso8601String(),
-        'message': 'Monitorando áudio...',
-      });
-    } catch (e) {
-      print('Erro no loop de captura de áudio: $e');
-      service.invoke('update', {
-        'current_date': DateTime.now().toIso8601String(),
-        'message': 'Erro na captura de áudio.',
-      });
-    } finally {
-      _isProcessingAudio = false;
-    }
-  });
+  try {
+    final tempDir = await getTemporaryDirectory();
+    final path =
+        '${tempDir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.wav';
 
-  // Inicia a primeira gravação imediatamente
-  final directory = await getTemporaryDirectory();
-  _currentRecordingPath =
-      '${directory.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
-  await _audioRecorder.start(
-    path: _currentRecordingPath!,
-    RecordConfig(
-      encoder: AudioEncoder.aacLc,
+    await recorder.startRecorder(
+      toFile: path,
+      codec: Codec.pcm16WAV,
       numChannels: 1,
       sampleRate: 16000,
-    ),
-  );
-  print('Primeira gravação iniciada: $_currentRecordingPath');
-}
-
-// Processa um chunk de áudio gravado
-Future<void> _processAudioChunk(
-  String audioPath,
-  ServiceInstance service,
-) async {
-  // SIMULAÇÃO: Detecção de palavras hostis
-  // Em um cenário real, você enviaria este 'audioPath' para um serviço de Speech-to-Text
-  // e depois para um serviço de NLP para análise de sentimentos/detecção de palavras-chave.
-  bool containsHostileWords =
-      DateTime.now().second % 20 < 10; // Simula detecção a cada 10 segundos
-
-  if (containsHostileWords) {
-    print('Palavra hostil detectada no áudio: $audioPath');
-    service.invoke('update', {
-      'current_date': DateTime.now().toIso8601String(),
-      'message': 'Incidente detectado!',
-    });
-
-    // 1. Registrar Incidente
-    final incidentId = Uuid().v4(); // Gera um ID único para o incidente
-    final incident = Incident(
-      id: incidentId,
-      description: 'Hostilidade detectada em áudio.',
-      timestamp: DateTime.now(),
-      location:
-          'Localização desconhecida (adicionar lógica de localização aqui)',
-      date: DateTime.now(),
     );
 
-    bool incidentRegistered = await _apiService.registerIncident(
-      incident,
-      token: getToken().toString(),
-    );
+    print('[WorkManager] Gravando...');
+    await Future.delayed(const Duration(seconds: 5));
 
-    if (incidentRegistered) {
-      print('Incidente registrado com sucesso no backend.');
-      // 2. Registrar Artefato (o arquivo de áudio)
-      bool artifactRegistered = await _artifactService.registerArtifact(
-        incidentId,
-        audioPath,
-        'audio/m4a', // Tipo de arquivo
-        token: getToken().toString(),
+    await recorder.stopRecorder();
+    print('[WorkManager] Gravação finalizada.');
+
+    final file = File(path);
+    if (!await file.exists()) {
+      print('[WorkManager] Arquivo de áudio não encontrado.');
+      return;
+    }
+
+    final bytes = await file.readAsBytes();
+    final transcription = await _transcribeAudio(bytes, googleSpeechApiKey);
+
+    print('[WorkManager] Transcrição: $transcription');
+
+    // Busca badwords
+    List<Badword> allBadwords = [];
+    try {
+      allBadwords.addAll(
+          await _badwordService.getBadwordsDefault(token: authToken));
+      allBadwords.addAll(
+          await _badwordService.getBadwordsCustom(token: authToken));
+    } catch (e) {
+      print('[WorkManager] Erro ao buscar badwords: $e');
+    }
+
+    // Verifica hostilidade
+    final badword = _checkHostilityInTranscription(transcription, allBadwords);
+    if (badword != null) {
+      final id = const Uuid().v4();
+      final incident = Incident(
+        id: id,
+        level: 4,
+        description: 'Palavra hostil: "${badword.word}"',
+        timestamp: DateTime.now(),
+        location: 'Desconhecida',
+        systemAction: 'Hostilidade registrada.',
+        audioTranscription: transcription,
       );
 
-      if (artifactRegistered) {
-        print('Artefato de áudio enviado com sucesso para o backend.');
-      } else {
-        print('Falha ao enviar artefato de áudio.');
+      try {
+        final registered =
+            await _apiService.registerIncident(incident, token: authToken);
+        if (registered) {
+          await _artifactService.registerArtifact(
+              id, file.path, 'audio/wav',
+              token: authToken);
+          print('[WorkManager] Incidente registrado com sucesso.');
+        } else {
+          print('[WorkManager] Falha ao registrar incidente.');
+        }
+      } catch (e) {
+        print('[WorkManager] Erro ao enviar dados: $e');
       }
     } else {
-      print('Falha ao registrar incidente no backend.');
+      print('[WorkManager] Nenhuma palavra hostil detectada.');
     }
-  } else {
-    print('Nenhuma hostilidade detectada no áudio: $audioPath');
-  }
 
-  // Opcional: Excluir o arquivo de áudio após o processamento para economizar espaço
-  try {
-    final file = File(audioPath);
-    if (await file.exists()) {
-      await file.delete();
-      print('Arquivo de áudio temporário excluído: $audioPath');
-    }
+    await file.delete();
   } catch (e) {
-    print('Erro ao excluir arquivo de áudio: $e');
+    print('[WorkManager] Erro no processo: $e');
+  } finally {
+    await recorder.closeRecorder();
   }
 }
 
-// Função auxiliar para parar a gravação e cancelar o timer
-Future<void> _stopAudioRecording() async {
-  _audioCaptureTimer?.cancel(); // Cancela o timer de captura periódica
-  _audioCaptureTimer = null; // Zera o timer
-  if (await _audioRecorder.isRecording()) {
-    final path = await _audioRecorder.stop();
-    print('Gravação de áudio parada. Último arquivo salvo em: $path');
-    // Se o serviço for parado, o último chunk gravado pode precisar ser processado
-    if (path != null) {
-      // await _processAudioChunk(path, service); // Opcional: Processar o último chunk ao parar
+
+/// Função auxiliar para transcrever áudio
+Future<String> _transcribeAudio(Uint8List audioBytes, String apiKey) async {
+  final speechToText = SpeechToText.viaApiKey(apiKey);
+  final response = await speechToText.recognize(
+    RecognitionConfig(
+      encoding: AudioEncoding.LINEAR16,
+      sampleRateHertz: 16000,
+      languageCode: 'pt-BR',
+    ),
+    audioBytes,
+  );
+  return response.results.map((r) => r.alternatives.first.transcript).join(' ');
+}
+
+/// Função auxiliar para verificar hostilidade
+Badword? _checkHostilityInTranscription(String text, List<Badword> badwords) {
+  final lowered = text.toLowerCase();
+  for (final bw in badwords) {
+    if (lowered.contains(bw.word.toLowerCase())) {
+      print('[WorkManager] Palavra hostil detectada: ${bw.word}');
+      return bw;
     }
   }
-  _currentRecordingPath = null;
-  _isProcessingAudio = false;
-}
-
-// Função para inicializar o serviço de background
-Future<void> initializeService() async {
-  final service = FlutterBackgroundService();
-
-  await service.configure(
-    androidConfiguration: AndroidConfiguration(
-      onStart: onStart,
-      isForegroundMode:
-          true, // Essencial para acesso ao microfone em background
-      autoStart: false,
-      initialNotificationTitle: 'Mobility Watch',
-      initialNotificationContent: 'Serviço de monitoramento ativo',
-      foregroundServiceNotificationId: 888,
-    ),
-    iosConfiguration: IosConfiguration(autoStart: false, onForeground: onStart),
-  );
+  return null;
 }

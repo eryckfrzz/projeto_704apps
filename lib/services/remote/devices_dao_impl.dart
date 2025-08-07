@@ -144,6 +144,7 @@ class DevicesDaoImpl implements DeviceDao {
   Future<Device?> registerDevice(Device device, {required String token}) async {
     try {
       String jsonDevice = jsonEncode(device.toJson());
+      print('Payload de registro de dispositivo: $jsonDevice');
 
       http.Response response = await client.post(
         Uri.parse('${apiUrl.url}/device'),

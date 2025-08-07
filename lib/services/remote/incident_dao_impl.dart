@@ -45,30 +45,36 @@ class IncidentDaoImpl implements IncidentDao {
     return false;
   }
 
-  @override
+@override
   Future<List<Incident>> getIncidents({required String token}) async {
     try {
       http.Response response = await client.get(
-        Uri.parse('${apiUrl.url}/incident'),
+        Uri.parse('${apiUrl.url}/incident?page=1&size=40&filter='),
         headers: {'Authorization': 'Bearer $token'},
       );
 
       if (response.statusCode == 200) {
-        List<Incident> incidents = [];
-        List<dynamic> incidentsList = json.decode(response.body);
+        // Decodifica a resposta JSON em um Map (objeto)
+        final Map<String, dynamic> responseData = json.decode(response.body);
 
-        for(var jsonMap in incidentsList) {
-          incidents.add(Incident.fromJson(jsonMap));
+        // Acessa a lista de incidentes dentro da chave 'data' ou 'incidents'
+        // Ajuste 'data' para a chave correta que sua API usa para a lista de incidentes
+        final List<dynamic> incidentsJsonList = responseData['incidents'] as List<dynamic>; // OU responseData['incidents']
+
+        List<Incident> incidents = [];
+        for (var jsonMap in incidentsJsonList) {
+          incidents.add(Incident.fromJson(jsonMap as Map<String, dynamic>));
         }
 
-        print('Incidentes encontrados com sucesso!');
+        print('Incidentes encontrados com sucesso! Total: ${incidents.length}');
         return incidents;
+      } else {
+        print('Erro ao buscar incidentes: Status Code ${response.statusCode} - ${response.body}');
+        return Future.error('Falha ao buscar incidentes: ${response.statusCode}');
       }
     } catch (e) {
       print('Erro ao buscar incidentes: $e');
-      return Future.error('Erro ao buscar incidentes');
+      return Future.error('Erro ao buscar incidentes: ${e.toString()}');
     }
-
-    return [];
   }
 }

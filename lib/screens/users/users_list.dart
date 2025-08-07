@@ -49,34 +49,34 @@ class _UsersListState extends State<UsersList> {
             itemBuilder: (context, index) {
               final user = _userStore.users[index];
 
-              return Card(
-                margin: const EdgeInsets.all(8),
-                child: InkWell(
-                  onTap: () async {
-                    final bool? wasDeleted = await Navigator.of(
-                      context,
-                    ).pushNamed('userDetail', arguments: user.id) as bool?;
+              // return Card(
+              //   margin: const EdgeInsets.all(8),
+              //   child: InkWell(
+              //     onTap: () async {
+              //       final bool? wasDeleted = await Navigator.of(
+              //         context,
+              //       // ).pushNamed('userDetail', arguments: user.id) as bool?;
 
-                    if (wasDeleted == true) {
-                      _userStore.removeUserFromList(user.id);   
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'ID: ${user.id}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text('NAME: ${user.name}'),
-                        Text('EMAIL: ${user.email}'),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+              //       if (wasDeleted == true) {
+              //         _userStore.removeUserFromList(user.id!);   
+              //       }
+              //     },
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(16.0),
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Text(
+              //             'ID: ${user.id}',
+              //             style: const TextStyle(fontWeight: FontWeight.bold),
+              //           ),
+              //           Text('NAME: ${user.name}'),
+              //           Text('EMAIL: ${user.email}'),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // );
             },
           );
         },

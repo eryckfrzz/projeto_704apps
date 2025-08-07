@@ -1,10 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:projeto_704apps/stores/user_store.dart';
 import 'package:provider/provider.dart';
 
 import 'package:projeto_704apps/features/models/user.dart';
-import 'package:projeto_704apps/stores/user_store.dart';
 
 class AddUserScreen extends StatefulWidget {
   const AddUserScreen({super.key});
@@ -19,7 +18,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _roleController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _whatsappController = TextEditingController();
+  final TextEditingController _moreInfoController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -27,31 +29,51 @@ class _AddUserScreenState extends State<AddUserScreen> {
     _userStore = Provider.of<UserStore>(context);
   }
 
-  Future<void> _handleAddUser() async {
+  void _showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+      ),
+    );
+  }
+
+  Future<void> _handleRegisterUser() async {
     final name = _nameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
-    final role = _roleController.text;
+    final address = _addressController.text;
+    final phone = _phoneController.text;
+    final whatsapp = _whatsappController.text;
 
-    final newUser = User(
-      id: 0,
-      name: name,
+    final bool isUserApp = true;
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      _showSnackBar('Por favor, preencha todos os campos obrigatórios.', isError: true);
+      return;
+    }
+
+    User newUser = User(
+      id: _userStore.user?.id, // Pode ser nulo para um novo usuário
       email: email,
+      name: name,
       password: password,
-      role: role,
+      phone: phone,
+      adress: address,
+      whatsapp: whatsapp,
+      extraInfos: _moreInfoController.text,
     );
 
-    final bool addedSuccessfully = await _userStore.addUser(newUser);
+    final bool addedSuccessfully = await _userStore.addUser(
+      newUser,
+      userAppFlag: isUserApp,
+    );
 
     if (addedSuccessfully) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Usuário adicionado com sucesso!')),
-      );
-      Navigator.of(context).pop(true);
+      _showSnackBar('Usuário adicionado com sucesso!');
+      Navigator.pop(context, true);
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Falha ao adicionar usuário.')));
+      _showSnackBar( 'Falha ao adicionar usuário.', isError: true);
     }
   }
 
@@ -61,10 +83,13 @@ class _AddUserScreenState extends State<AddUserScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Observer(
         builder: (_) {
+        
+          
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Form(
@@ -77,29 +102,24 @@ class _AddUserScreenState extends State<AddUserScreen> {
                     width: 190,
                     height: 190,
                   ),
-
-                  SizedBox(height: 60),
-
+                  const SizedBox(height: 60),
                   TextFormField(
-                     cursorColor: Colors.black,
+                    cursorColor: Colors.black,
                     controller: _nameController,
                     decoration: const InputDecoration(
-                      labelText: 'Name',
+                      labelText: 'Nome',
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
-
                         borderRadius: BorderRadius.all(Radius.circular(13)),
                       ),
                       floatingLabelStyle: TextStyle(color: Colors.transparent),
                       fillColor: Colors.white,
                       filled: true,
-
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                         borderRadius: BorderRadius.all(Radius.circular(13)),
                       ),
                     ),
-
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'O nome não pode ser vazio.';
@@ -109,26 +129,23 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   ),
                   const SizedBox(height: 25),
                   TextFormField(
-                     cursorColor: Colors.black,
+                    cursorColor: Colors.black,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
-
                         borderRadius: BorderRadius.all(Radius.circular(13)),
                       ),
                       floatingLabelStyle: TextStyle(color: Colors.transparent),
                       fillColor: Colors.white,
                       filled: true,
-
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                         borderRadius: BorderRadius.all(Radius.circular(13)),
                       ),
                     ),
-
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'O email não pode ser vazio.';
@@ -140,21 +157,19 @@ class _AddUserScreenState extends State<AddUserScreen> {
                     },
                   ),
                   const SizedBox(height: 25),
-
                   TextFormField(
                     cursorColor: Colors.black,
                     controller: _passwordController,
+                    obscureText: true, // Adicionado para senhas
                     decoration: const InputDecoration(
-                      labelText: 'Password',
+                      labelText: 'Senha',
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
-
                         borderRadius: BorderRadius.all(Radius.circular(13)),
                       ),
                       floatingLabelStyle: TextStyle(color: Colors.transparent),
                       fillColor: Colors.white,
                       filled: true,
-
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                         borderRadius: BorderRadius.all(Radius.circular(13)),
@@ -164,52 +179,133 @@ class _AddUserScreenState extends State<AddUserScreen> {
                       if (value == null || value.isEmpty) {
                         return 'A senha não pode ser vazia.';
                       }
+                      return null;
                     },
                   ),
-
                   const SizedBox(height: 25),
-
                   TextFormField(
-                    controller: _roleController,
+                    controller: _addressController,
                     decoration: const InputDecoration(
-                      labelText: 'Role',
+                      labelText: 'Endereço',
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
-
                         borderRadius: BorderRadius.all(Radius.circular(13)),
                       ),
                       floatingLabelStyle: TextStyle(color: Colors.transparent),
                       fillColor: Colors.white,
                       filled: true,
-
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                         borderRadius: BorderRadius.all(Radius.circular(13)),
                       ),
                     ),
-
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'O campo não pode ser vazio.';
                       }
+                      return null;
                     },
                   ),
-
+                  const SizedBox(height: 25),
+                  TextFormField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone, // Tipo de teclado para telefone
+                    decoration: const InputDecoration(
+                      labelText: 'Telefone',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
+                      floatingLabelStyle: TextStyle(color: Colors.transparent),
+                      fillColor: Colors.white,
+                      filled: true,
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'O campo não pode ser vazio.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 25),
+                  TextFormField(
+                    controller: _whatsappController,
+                    keyboardType: TextInputType.phone, // Tipo de teclado para telefone
+                    decoration: const InputDecoration(
+                      labelText: 'Whatsapp',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
+                      floatingLabelStyle: TextStyle(color: Colors.transparent),
+                      fillColor: Colors.white,
+                      filled: true,
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.all(Radius.circular(13)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'O campo não pode ser vazio.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 25),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 1),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Mais informações sobre você, seu transporte, seu trabalho, etc...',
+                          style: TextStyle(fontSize: 11, color: Colors.black),
+                        ),
+                        const SizedBox(height: 8),
+                        TextField(
+                          controller: _moreInfoController,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          style: const TextStyle(fontSize: 16, color: Colors.black),
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 80),
                   ElevatedButton(
-                    onPressed: _handleAddUser,
+                    onPressed: _handleRegisterUser,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 80),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 80,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                       ),
-                      backgroundColor: Colors.blue
+                      backgroundColor: Colors.blue,
                     ),
                     child: const Text(
                       'Adicionar Usuário',
-                      style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18, color: Colors.white),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
                     ),
-                    
                   ),
                 ],
               ),

@@ -106,7 +106,7 @@ class _ContactsListState extends State<ContactsList> {
                   Navigator.pushNamed(
                     context,
                     'contactDetail',
-                    arguments: contact.id,
+                    // arguments: contact.id,
                   );
                 },
 

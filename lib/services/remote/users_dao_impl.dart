@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:projeto_704apps/features/data/users_dao.dart';
@@ -53,19 +54,25 @@ class UsersDaoImpl implements UsersDao {
   }
 
   @override
-  Future<User?> register(User user) async {
+  Future<User?> register(User user, {required bool userApp}) async {
     try {
       final Map<String, dynamic> userData = user.toJson();
+
       String jsonUser = jsonEncode(userData);
 
       http.Response response = await client.post(
-        Uri.parse('${apiUrl.url}/user'),
+        Uri.parse(
+          '${apiUrl.url}/user',
+        ).replace(queryParameters: {'userApp': userApp.toString()}),
         headers: {"Content-Type": "application/json"},
         body: jsonUser,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('registro criado com sucesso!');
+
+        Map<String, dynamic> userData = json.decode(response.body);
+        return User.fromJson(userData);
       } else {
         print('${response.statusCode}');
         print('Erro ao registrar usuário!');
@@ -79,10 +86,10 @@ class UsersDaoImpl implements UsersDao {
   }
 
   @override
-  getUserById(int id, {required String token}) async {
+  getUserById(int id, {required String token, required bool userApp}) async {
     try {
       http.Response response = await client.get(
-        Uri.parse('${apiUrl.url}/user/$id'),
+        Uri.parse('${apiUrl.url}/user/$id').replace(queryParameters: {'userApp': userApp.toString()}),
         headers: {"Authorization": 'Bearer $token'},
       );
 
@@ -167,5 +174,113 @@ class UsersDaoImpl implements UsersDao {
     }
 
     return false;
+  }
+
+  @override
+  Future<bool> addImageProfile(
+    int id,
+    XFile file, {
+    required String token,
+  }) async {
+    try {
+      var uri = Uri.parse('${apiUrl.url}/files-sender/profile-image/$id');
+      var request = http.MultipartRequest('POST', uri);
+      request.headers['Authorization'] = 'Bearer $token';
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          filename: file.name,
+          file.path,
+        ),
+      );
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Imagem de perfil enviada!');
+        return true;
+      } else {
+        print('Erro ao enviar a imagem de perdil!');
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print('Erro ao registrar imagem de perfil!');
+      print(e);
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> requestPasswordReset(String email) async {
+    try {
+      // Use um cliente HTTP sem interceptores de autenticação para esta rota
+      // Ou certifique-se que seu LoggerInterceptor não injeta token aqui.
+      http.Client publicClient =
+          http.Client(); // Cliente sem interceptor de auth
+
+      final Map<String, String> body = {'email': email};
+      final String jsonBody = jsonEncode(body);
+
+      http.Response response = await publicClient.post(
+        Uri.parse(
+          '${apiUrl.url}/auth/forgot-password',
+        ), // Endpoint para solicitar reset
+        headers: {'Content-type': 'application/json'}, // Apenas Content-type
+        body: jsonBody,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        // 204 No Content é comum para sucesso sem retorno
+        print(
+          'Solicitação de recuperação de senha enviada com sucesso para $email!',
+        );
+        return true;
+      } else {
+        print(
+          'Erro ao solicitar recuperação de senha! Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      print('Exceção ao solicitar recuperação de senha: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> resetPassword(String token, String newPassword) async {
+    try {
+      http.Client publicClient = http.Client();
+
+      final Map<String, String> body = {
+        'token': token,
+        'newPassword': newPassword,
+      };
+      final String jsonBody = jsonEncode(body);
+
+      http.Response response = await publicClient.post(
+        // Ou PATCH/PUT dependendo da sua API
+        Uri.parse(
+          '${apiUrl.url}/auth/reset-password',
+        ), // Endpoint para redefinir senha
+        headers: {'Content-type': 'application/json'},
+        body: jsonBody,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        print('Senha redefinida com sucesso!');
+        return true;
+      } else {
+        print(
+          'Erro ao redefinir senha! Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      print('Exceção ao redefinir senha: $e');
+      return false;
+    }
   }
 }

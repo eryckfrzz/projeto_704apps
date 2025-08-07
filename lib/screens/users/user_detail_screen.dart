@@ -22,7 +22,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     super.didChangeDependencies();
     _userStore = Provider.of<UserStore>(context);
 
-    _userStore.getUserId(widget.userId);
+    _userStore.getUserId(widget.userId, userAppFlag: false);
   }
 
   Future<void> _handleDelete() async {
@@ -79,10 +79,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'ID: ${user.id}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    // Text(
+                    //   //'ID: ${user.id}',
+                    //   //style: const TextStyle(fontWeight: FontWeight.bold),
+                    // ),
                     const SizedBox(height: 8),
                     Text(
                       'NAME: ${user.name}',
@@ -102,7 +102,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                             Navigator.pushNamed(
                               context,
                               'editUser',
-                              arguments: user.id,
+                              //arguments: user.id,
                             );
                           },
                           icon: const Icon(Icons.edit, color: Colors.green),

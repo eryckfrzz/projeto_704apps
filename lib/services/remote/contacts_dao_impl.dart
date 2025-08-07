@@ -70,19 +70,30 @@ class ContactsDaoImpl implements ContactDao {
   }
 
   @override
-  Future<Contact?> registerContact(Contact contact, {required String token}) async {
+  Future<Contact?> registerContact(
+    Contact contact, {
+    required String token,
+  }) async {
     try {
       String jsonUser = jsonEncode(contact.toJson());
 
+      print(jsonUser);
+
       http.Response response = await client.post(
         Uri.parse('${apiUrl.url}/contacts'),
-        headers: {'Authorization': 'Bearer $token','Content-type': 'application/json', },
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-type': 'application/json',
+        },
         body: jsonUser,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Contato registrado com sucesso!');
-       
+
+        Map<String, dynamic> contactData = json.decode(response.body);
+
+        return Contact.fromJson(contactData);
       } else {
         print(response.statusCode);
         print('Erro ao registrar contato!');
@@ -92,39 +103,38 @@ class ContactsDaoImpl implements ContactDao {
       print('Erro!');
     }
     return null;
-   
   }
 
-  @override
-  Future<bool> updateContact(
-    Contact contact,
-    int id, {
-    required String token,
-  }) async {
-    try {
-      String jsonContact = json.encode(contact.toJson());
+  // @override
+  // Future<bool> updateContact(
+  //   Contact contact,
+  //   int id, {
+  //   required String token,
+  // }) async {
+  //   try {
+  //     String jsonContact = json.encode(contact.toJson());
 
-      http.Response response = await client.patch(
-        Uri.parse('${apiUrl.url}/contacts/${id}'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-type': 'application/json',
-        },
-        body: jsonContact,
-      );
+  //     http.Response response = await client.patch(
+  //       Uri.parse('${apiUrl.url}/contacts/${id}'),
+  //       headers: {
+  //         'Authorization': 'Bearer $token',
+  //         'Content-type': 'application/json',
+  //       },
+  //       body: jsonContact,
+  //     );
 
-      if(response.statusCode == 200 || response.statusCode == 201) {
-        print('Contato atualizado com sucesso!');
-        return true;
-      } else {
-        print(response.statusCode);
-        print('Erro ao atualizar contato!');
-      }
-    } catch (e) {
-      print(e);
-      print('Erro!');
-    }
+  //     if(response.statusCode == 200 || response.statusCode == 201) {
+  //       print('Contato atualizado com sucesso!');
+  //       return true;
+  //     } else {
+  //       print(response.statusCode);
+  //       print('Erro ao atualizar contato!');
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     print('Erro!');
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 }

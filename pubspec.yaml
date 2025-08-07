@@ -15,25 +15,33 @@ dependencies:
   cupertino_icons: ^1.0.8
   uuid: ^4.5.1
   google_fonts: ^6.2.1
-  http: ^1.3.0
+  http: ^1.3.0 # Certifique-se de que http está aqui
   http_interceptor: ^2.0.0
   logger: ^2.5.0
   shared_preferences: ^2.5.3
   mobx: ^2.3.3+2
   flutter_mobx: ^2.2.0+1
   provider: ^6.1.2
-  flutter_sound: ^9.2.13 
-  sqflite: ^2.4.2
-  workmanager: ^0.6.0 
-  path_provider: ^2.1.1 
-  permission_handler: ^12.0.0 
-  audioplayers: ^6.5.0 
-  path: ^1.8.3
-  camera: ^0.11.1
-  record: ^6.0.0 
-  flutter_background_service: ^5.1.0 
-  flutter_tts: ^4.2.3
-  flutter_overlay_window: 0.5.0
+
+  flutter_sound: ^9.28.0
+  # workmanager: ^0.7.0
+  path_provider: ^2.1.1
+  permission_handler: ^12.0.1
+  audioplayers: ^6.2.0
+  path: ^1.9.0
+  # sqflite: ^2.4.1 # Remover se não for usar DB local
+  # dio: ^5.8.0+1 # REMOVER ESTA LINHA
+  file_picker: ^10.2.1 # Remover se não for usar
+  image_picker: ^1.1.2 # Remover se não for usar
+  camera: ^0.11.1 # Remover se não for usar
+  device_info_plus: ^11.5.0
+  intl: ^0.20.2
+  google_speech: ^5.3.0
+  # flutter_background_service: ^5.1.0
+  # geolocator: ^12.0.0
+  flutter_local_notifications: ^19.4.0
+  diacritic: ^0.1.6
+  flutter_foreground_task: ^9.1.0
 
 dev_dependencies:
   flutter_test:
@@ -44,12 +52,12 @@ dev_dependencies:
   mobx_codegen: ^2.6.1
 
 flutter:
-
   uses-material-design: true
 
   assets:
+    - assets/images/WhatsApp_Image_2025-06-20_at_17.56.48-removebg-preview.png
+    - assets/google_speech_api_key.txt
     - assets/images/LOGO_ZAFIRA-01.png
     - assets/images/LOGO_ZAFIRA-01b.png
     - assets/images/LOGO_ZAFIRA-02.png
     - assets/images/LOGO_ZAFIRA-03.png
-    - assets/images/WhatsApp_Image_2025-06-20_at_17.56.48-removebg-preview.png

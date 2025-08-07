@@ -66,14 +66,6 @@ mixin _$ContactStore on _ContactStore, Store {
     return _$fetchContactIdAsyncAction.run(() => super.fetchContactId(id));
   }
 
-  late final _$updateContactAsyncAction =
-      AsyncAction('_ContactStore.updateContact', context: context);
-
-  @override
-  Future<bool> updateContact(Contact contact) {
-    return _$updateContactAsyncAction.run(() => super.updateContact(contact));
-  }
-
   @override
   String toString() {
     return '''

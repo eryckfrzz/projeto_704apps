@@ -24,9 +24,9 @@ class _EditContactScreenState extends State<EditContactScreen> {
     super.didChangeDependencies();
     _contactStore = Provider.of<ContactStore>(context); 
 
-    if (_contactStore.contact?.id != widget.contactId || _contactStore.contact == null) {
-      _contactStore.fetchContactId(widget.contactId);
-    }
+    // if (_contactStore.contact?.id != widget.contactId || _contactStore.contact == null) {
+    //   _contactStore.fetchContactId(widget.contactId);
+    // }
     if (_contactStore.contact != null) {
       _titleController.text = _contactStore.contact!.title ?? '';
       _numberController.text = _contactStore.contact!.number ?? '';
@@ -46,27 +46,27 @@ class _EditContactScreenState extends State<EditContactScreen> {
     }
 
     final updatedContact = Contact(
-      id: widget.contactId,
+      // id: widget.contactId,
       title: title,
       number: number,
-      instanceEmitter: instanceEmitter
+      isEmitter: _contactStore.contact!.isEmitter, // Preserva o valor de isEmitter
     );
 
-    final bool updatedSuccessfully = await _contactStore.updateContact(
-      updatedContact,
-    );
+    // final bool updatedSuccessfully = await _contactStore.updateContact(
+    //   updatedContact,
+    // );
 
-    if (updatedSuccessfully) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Contato atualizado com sucesso!')),
-      );
+    // if (updatedSuccessfully) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Contato atualizado com sucesso!')),
+    //   );
 
-      Navigator.of(context).pop(true);
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Falha ao atualizar contato.')));
-    }
+    //   Navigator.of(context).pop(true);
+    // } else {
+    //   ScaffoldMessenger.of(
+    //     context,
+    //   ).showSnackBar(SnackBar(content: Text('Falha ao atualizar contato.')));
+    // }
   }
 
   @override

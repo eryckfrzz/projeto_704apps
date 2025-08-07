@@ -12,7 +12,7 @@ abstract class _IncidentStore with Store {
   Incident? incident;
 
   @observable
-  ObservableList<String> incidents = ObservableList<String>();
+  ObservableList<Incident> incidents = ObservableList<Incident>();
 
   final IncidentDaoImpl service = IncidentDaoImpl();
 
@@ -39,7 +39,7 @@ abstract class _IncidentStore with Store {
     );
 
     if (isRegistred) {
-      incidents.add(newIncident.toString());
+      incidents.add(newIncident);
       return true;
     }
 

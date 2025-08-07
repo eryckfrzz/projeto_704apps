@@ -2,6 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Este aplicativo precisa de acesso à sua localização para monitorar incidentes em segundo plano.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Este aplicativo precisa de acesso à sua localização para monitorar incidentes em segundo plano, mesmo quando o aplicativo não está em uso.</string>
+<key>UIBackgroundModes</key>
+<array>
+    <string>location</string>
+</array>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>This app needs access to your photo library to upload profile and other images.</string>
+<key>NSCameraUsageDescription</key>
+<string>This app needs access to your camera to take profile and other images.</string>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

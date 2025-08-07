@@ -1,14 +1,15 @@
 class Badword {
-  String badwordId;
   String word;
+  final String? group;
+  int? userId;
 
-  Badword({required this.badwordId, required this.word});
+  Badword({required this.word, this.userId, this.group});
 
   Map<String, dynamic> toJson() {
-    return {'badwordId': badwordId, 'word': word};
+    return {'word': word, 'userId': userId};
   }
 
   factory Badword.fromjson(Map<String, dynamic> json) {
-    return Badword(badwordId: json['badwordId'], word: json['word']);
+    return Badword(word: json['word'], userId: json['userId'] as int?, group: json['group'] as String?);
   }
 }

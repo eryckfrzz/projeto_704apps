@@ -1,27 +1,27 @@
 class Device {
-  String deviceId;
-  String command;
-  String serialNumber;
+  String? deviceId;
+  String? serialNumber;
+  String? command;
 
   Device({
-    required this.deviceId,
-    required this.command,
-    required this.serialNumber,
+    this.deviceId,
+    this.serialNumber,
+    this.command
   });
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'devideId': deviceId,
+    return {
+      'serialNumber': serialNumber,
       'command': command,
-      'SerialNumber': serialNumber,
+      'deviceId': deviceId
     };
   }
 
   factory Device.fromjson(Map<String, dynamic> json) {
     return Device(
-      deviceId: json['deviceId'],
-      command: json['command'],
+      deviceId: json['deviceId']?.toString(),
       serialNumber: json['serialNumber'],
+     command: json['command']?.toString()
     );
   }
 }

@@ -4,8 +4,11 @@ import 'package:projeto_704apps/screens/contacts/add_contact_screen.dart';
 import 'package:projeto_704apps/screens/contacts/contact_detail_screen.dart';
 import 'package:projeto_704apps/screens/contacts/contacts_list.dart';
 import 'package:projeto_704apps/screens/contacts/edit_contact_screen.dart';
+import 'package:projeto_704apps/screens/forgot_password_screen.dart';
+import 'package:projeto_704apps/screens/incidents/badwords/badwords_screen.dart';
+import 'package:projeto_704apps/screens/incidents/incidents_list_screen.dart';
 import 'package:projeto_704apps/screens/profile/add_profile.dart';
-import 'package:projeto_704apps/screens/users/add_user_screen.dart';
+import 'package:projeto_704apps/screens/users/register_user_screen.dart';
 import 'package:projeto_704apps/screens/users/edit_user_screen.dart';
 import 'package:projeto_704apps/screens/home.dart';
 import 'package:projeto_704apps/screens/users/user_detail_screen.dart';
@@ -27,7 +30,10 @@ class MyApp extends StatelessWidget {
         'addUserScreen': (context) => AddUserScreen(),
         'contactsList': (context) => ContactsList(),
         'addContactScreen': (context) => AddContactScreen(),
-        'profile': (context) => AddProfile()
+        'profile': (context) => AddProfile(),
+        'incidents': (context) => IncidentsListScreen(),
+        'badwords': (context) => BadwordsScreen(),
+        'forgoutPassword': (context) => ForgotPasswordScreen()
       },
       onGenerateRoute: (settings) {
         if (settings.name == 'userDetail') {

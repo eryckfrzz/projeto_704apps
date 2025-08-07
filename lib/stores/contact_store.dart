@@ -24,7 +24,7 @@ abstract class _ContactStore with Store {
 
     final fetchedContacts = await service.getContacts(token: token!);
 
-    contacts = fetchedContacts.asObservable() ;
+    contacts = fetchedContacts.asObservable();
     print('Contatos encontrados! ${contacts.length}');
   }
 
@@ -34,10 +34,14 @@ abstract class _ContactStore with Store {
 
     String? token = prefs.getString('access_token');
 
-    final Contact? addContact = await service.registerContact(newContact, token: token!);
+    final Contact? addContact = await service.registerContact(
+      newContact,
+      token: token!,
+    );
 
     if (addContact != null) {
-      contacts.add(addContact as Contact);
+      contacts.add(addContact);
+      contact = addContact;
       return true;
     }
 
@@ -54,36 +58,33 @@ abstract class _ContactStore with Store {
 
     if (fetchedId != null) {
       contact = fetchedId;
-      
     }
-
-    
   }
 
-  @action
-  Future<bool> updateContact(Contact contact) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // @action
+  // Future<bool> updateContact(Contact contact) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String? token = prefs.getString('access_token');
+  //   String? token = prefs.getString('access_token');
 
-    final contactUpdated = service.updateContact(
-      contact,
-      contact.id,
-      token: token!,
-    );
+  //   final contactUpdated = service.updateContact(
+  //     contact,
+  //     // contact.id,
+  //     token: token!,
+  //   );
 
-    if (contactUpdated != null) {
-      this.contact = contact;
+  //   if (contactUpdated != null) {
+  //     this.contact = contact;
 
-      final int index = contacts.indexWhere((c) => c.id == contact.id);
+  //     // final int index = contacts.indexWhere((c) => c.id == contact.id);
 
-      if (index != -1) {
-        contacts[index] = contact;
-      }
+  //     // if (index != -1) {
+  //     //   contacts[index] = contact;
+  //     // }
 
-      return true;
-    }
+  //     return true;
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 }

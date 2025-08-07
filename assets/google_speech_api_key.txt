@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "projeto704apps",
+  "private_key_id": "563352f33db342bd552cef84487f093bf95665e1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQChH//Up8URljN6\np6en3wKlM26QLo6y1VT3nSJuLUmYQoduK24gGTYL7yau5NnCmQEySKupO/NqwSF8\ncU7KuDYcb1knoAZvBkIqSWTWStby83n2s9futL6KbKjFfn1XydBFUYw4cIZTftNj\nK/V8hso4sczq6ww0ixHW52RHVy1QykkWDD1Grlj5y7UYsxjC0MHLAgnB6uQMMmu/\nLOhOS50+W/YIj1tf/zIWEIth+RdjHvOCqePVCzF4+aigBSRMe8KZYBlX3DjCn8Ci\nvqogW/Mo+DK0/5VHtMWomNMq+g9Bjl89nlOq1JZCJyFQhkFq3fErWzR1fySvcZkf\ndzLit0I3AgMBAAECggEACpXRF1XsRvMAr8qq44btpA/EcDl2y33jZp8On4FfJ98b\nCZxV0EsHt3H/Lxc+zR+DKhwHFwemvrkwa34AKKZAe86+4zEKqymUmDWZJ9Dj3TMs\nrI31HiwGpo5r6gmcz3MlOSCZ3y1ZTcvztDyzlHpAd8gKh9ZoR11pjx5FgsBR7FA7\nDylpDAT8F4TXrjCyuHyk8eiLV/A5rcF9CH6U+0CZqeeJ6xl4tYISy3MH8LS+c79Z\n/hjZ2McfzUGHy+0ENlRDhXqiOuoID0dijZTUPQBZ6WQPb8HdaGOlMakCLHjn0mIH\nbSmz0ShLZqsZOpLn1Imxzn8iRPXmNNWggExHLXHiLQKBgQDYLUazvkXTYeDHyJB9\nK6gWjTCxsumv+HmCMgoxKiILoAJvnW1PEdBWN/rtMVgkylgoOVVakV9SDeY+OGcu\nXmeZbLzk4ozb9MV9xSFmUdx1tmvyljBy60hrlF0CbFmEhyUa6GESn3rvq5pV52Wt\nbBJf/masQ84F+enBRsN/NlvQOwKBgQC+zoW5uniCeLxFCucQp2Yu4VSGYMlGgqmd\nPKa3Jq88vaSK/RTM1ZVv45ClErW/s1YqL5BqIUay5AZrtyeCraB2fHOnt2IIvZgI\nt4m2sPEPwuDe4uLsmFrG3tt45TYQOc+EiX71EHT/kgf4O3wPrEtprv7F2OjpgmBQ\nE6OHzyMSNQKBgC37U3KgIlIYG6vjKXi2dIZ3ecgSekqH27Cp3CkhASTf4CTFo56R\n93KfbaxONqV8tMu5hkJBcbkOY88QSEJAqmCkFHnLBpMyuV9LMxOEjhQrvUJYV+3Z\nxgm8ARym11OtO2NB0oQXkBqysZ1cHvCIcFAi2MwDkCsNQX9vAd5pPZZJAoGBAI8x\ncBwNO+k2cJwj7XqLFl1yTzu1oPegkWfmH3ttta8Q505DVfvPAiIBFwk6/FjMXoq0\nPV3YcTVJeSQXRLiGUtj41tb0AcdreZB5JQmMyqw4ZQgAH6rNP7rlfrHA2ozcxcbC\nZRvG6Pbvgbmh8p3UgJfkc2DJQyoS5PLTejMumTRNAoGBAJOwOPEIuryM9DUP3/dt\njqXsxNztljgBR0KfSxEgmD6/tDD9doMAiHx/UUAvYWDqL95+ChLvG7bP9zY0w9Os\nRtffMaDIWiQPptiAuQY62mFFOjU5GPv96kiOtCQ07QH7n7vKAa3zCQjKu1pH3kzE\nTUfZTw+y1a/B4TUbHE2eDSBw\n-----END PRIVATE KEY-----\n",
+  "client_email": "projeto704-audio@projeto704apps.iam.gserviceaccount.com",
+  "client_id": "107561256263241170969",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/projeto704-audio%40projeto704apps.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

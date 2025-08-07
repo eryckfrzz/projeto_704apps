@@ -48,7 +48,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                    mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('ID: ${contact.id}'),
+                    // Text('ID: ${contact.id}'),
                     Text('TITLE: ${contact.title}'),
                     Text('NUMBER: ${contact.number}'),
             
@@ -60,7 +60,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                             Navigator.pushNamed(
                               context,
                               'editContact',
-                              arguments: contact.id,
+                              // arguments: contact.id,
                             );
                           },
                           icon: const Icon(Icons.edit, color: Colors.green),

@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:projeto_704apps/features/models/user.dart';
+import 'package:projeto_704apps/screens/home.dart';
+import 'package:projeto_704apps/services/background_service.dart';
 import 'package:projeto_704apps/services/remote/login_dao_impl.dart';
-import 'package:projeto_704apps/services/remote/users_dao_impl.dart';
+import 'package:projeto_704apps/features/models/device.dart';
+import 'package:projeto_704apps/stores/device_store.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'dart:io' show Platform;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:workmanager/workmanager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,12 +23,120 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final LoginDaoImpl loginDao = LoginDaoImpl();
 
-  final UsersDaoImpl usersDao = UsersDaoImpl();
+  final LoginDaoImpl _loginDao = LoginDaoImpl();
+  late DeviceStore _deviceStore;
 
   bool _obscureText = true;
+  // String? _deviceIdentifier;
+  // bool _isGettingDeviceInfo = false;
+  // String? _deviceErrorMessage;
 
+  @override
+  void initState() {
+    super.initState();
+    // _getDeviceIdentifier();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _deviceStore = Provider.of<DeviceStore>(context);
+  }
+
+ Future<void> _handleLogin() async {
+  final User? loggedInUser = await _loginDao.login(
+    email: _emailController.text.trim(),
+    password: _passwordController.text.trim(),
+  );
+
+  if (loggedInUser == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Email ou senha inválidos.')),
+    );
+    return;
+  }
+
+  final prefs = await SharedPreferences.getInstance();
+
+  // Recupera token salvo pelo loginDao
+  final token = prefs.getString('access_token');
+  if (token == null || token.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Erro: Token de acesso não recebido.')),
+    );
+    return;
+  }
+
+  // Carrega chave do Google Speech de assets
+  String googleSpeechApiKey;
+  try {
+    googleSpeechApiKey = (await rootBundle.loadString(
+      'assets/google_speech_api_key.txt',
+    ))
+        .trim();
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Erro ao carregar chave da API do Google Speech.'),
+      ),
+    );
+    return;
+  }
+
+  if (googleSpeechApiKey.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Chave do Google Speech está vazia.')),
+    );
+    return;
+  }
+
+  // Salva chave no SharedPreferences (será usada pelo serviço)
+  await prefs.setString('google_speech_api_key', googleSpeechApiKey);
+
+  // // 🔄 Para qualquer instância anterior do serviço
+  // await FlutterForegroundTask.stopService();
+
+  // // ⚙ Inicializa antes de iniciar (garante compatibilidade)
+  // FlutterForegroundTask.init(
+  //   androidNotificationOptions: AndroidNotificationOptions(
+  //     channelId: 'hostility_detection',
+  //     channelName: 'Hostility Detection Service',
+  //     channelDescription:
+  //         'Serviço para gravação e análise de áudio em segundo plano.',
+  //     channelImportance: NotificationChannelImportance.LOW,
+  //     priority: NotificationPriority.LOW,
+  //     iconData: const NotificationIconData(
+  //       resType: ResourceType.mipmap,
+  //       resPrefix: ResourcePrefix.ic,
+  //       name: 'launcher',
+  //     ),
+  //   ),
+  //   iosNotificationOptions: const IOSNotificationOptions(
+  //     showNotification: true,
+  //     playSound: false,
+  //   ),
+  //   foregroundTaskOptions: const ForegroundTaskOptions(
+  //     interval: 5000, // Checa a cada 5 segundos
+  //     autoRunOnBoot: true,
+  //     allowWakeLock: true,
+  //   ),
+  // );
+
+  // // 🚀 Inicia serviço em foreground
+  // await FlutterForegroundTask.startService(
+  //   notificationTitle: 'Monitoramento de áudio ativo',
+  //   notificationText: 'O app está ouvindo e analisando hostilidade.',
+  //   callback: startCallback,
+  // );
+
+  // Vai para a Home
+  Navigator.pushReplacementNamed(
+    context,
+    'home',
+    arguments: {'userId': loggedInUser.id},
+  );
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +231,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, 'forgoutPassword');
+                    },
                     child: Text(
                       'Esqueci minha senha',
                       style: TextStyle(
@@ -128,29 +249,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
               ElevatedButton(
                 onPressed: () async {
-                  bool value = await loginDao.login(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  );
-
-                  if (value) {
-                    Navigator.pushNamed(context, 'home');
-                    loginDao.getProfile();
-                  }
+                  _handleLogin();
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 80),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
                 child: Text(
                   'Continuar',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w400,
                     fontSize: 18,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 80),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
                   ),
                 ),
               ),

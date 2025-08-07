@@ -5,13 +5,13 @@ abstract class BadwordDao {
   Future<bool> badwordsCustom(Badword badword, {required String token});
   Future<bool> registerBadwordsBulk(int userId, List<Badword> badwords,{required String token});
   Future<List<Badword>> getBadwordsDefault({required String token});
-  Future<List<Badword>> getBadwordsConfigured({required String token});
+  Future<List<Badword>> getBadwordsConfigured(String serialNumber, {required String token});
   Future<List<Badword>> getBadwordsCustom({required String token});
   Future<bool> updateBadword(
     Badword badword,
-    String badwordId, {
+    int badwordId, {
     required String token,
   });
-  Future<bool> deleteBadword(String badwordId, {required String token});
-  Future<bool> deleteBadwordCustom(String badwordId, {required String token});
+  Future<bool> deleteBadword(int badwordId, {required String token});
+  Future<bool> deleteBadwordCustom(int badwordId, {required String token});
 }
