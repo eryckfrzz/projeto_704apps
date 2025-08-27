@@ -36,11 +36,11 @@ Aplicativo Flutter para monitoramento e transcrição de áudio em tempo real ou
   4. Gerar APK (para instalar no celular)
     flutter build apk --release
 
+   5. Gerar AAB (para Play Store)
+    flutter build appbundle --release
+
   O arquivo será gerado em:
     build/app/outputs/flutter-apk/app-release.apk
-
-  5. Gerar AAB (para Play Store)
-    flutter build appbundle --release
 
 🔑 Permissões necessárias
 
