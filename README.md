@@ -1,16 +1,71 @@
 # projeto_704apps
 
-A new Flutter project.
+Mobility Watch 🎤📱
 
-## Getting Started
+Aplicativo Flutter para monitoramento e transcrição de áudio em tempo real ou segundo plano, com integração a APIs de transcrição de voz (Google Speech-to-Text ou Whisper API).
 
-This project is a starting point for a Flutter application.
+📌 Funcionalidades
 
-A few resources to get you started if this is your first Flutter project:
+  🎙️ Gravação de áudio com Flutter Sound
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+  🔄 Envio periódico de áudio para processamento (a cada 30 segundos no modo AUTO)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  🤖 Transcrição automática com IA (Whisper API ou Google STT)
+
+  ⚡ Execução em segundo plano usando Workmanager
+
+🎛️ Interface simples com botões:
+
+  AUTO → grava e processa em segundo plano
+
+  ON → grava apenas uma vez no foreground
+
+  OFF → encerra o serviço
+
+🚀 Como rodar o projeto
+  1. Clonar o repositório
+    git clone https://github.com/seu-usuario/mobility-watch.git
+    cd mobility-watch
+
+  2. Instalar dependências
+    flutter pub get
+
+  3. Rodar em modo debug
+    flutter run
+
+  4. Gerar APK (para instalar no celular)
+    flutter build apk --release
+
+  O arquivo será gerado em:
+    build/app/outputs/flutter-apk/app-release.apk
+
+  5. Gerar AAB (para Play Store)
+    flutter build appbundle --release
+
+🔑 Permissões necessárias
+
+  O app utiliza:
+
+  🎤 Microfone → para capturar o áudio
+
+  💾 Armazenamento → salvar temporariamente os chunks de áudio
+
+  🔔 Notificações → manter serviço em segundo plano
+
+No Android, essas permissões já estão configuradas no AndroidManifest.xml.
+
+🛠️ Tecnologias
+
+  Flutter
+
+  Workmanager
+   → tarefas em segundo plano
+
+  Flutter Sound
+   → captura de áudio
+
+  Permission Handler
+   → permissões
+
+Este projeto está sob a licença MIT.
+Sinta-se livre para usar, modificar e distribuir.
